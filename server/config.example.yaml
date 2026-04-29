@@ -1,0 +1,37 @@
+# Cerberus License 验证服务示例配置
+#
+# 使用方式：
+# 1. 复制本文件为 config.yaml
+# 2. 修改 auth.admin_token 和 auth.jwt_secret 为强随机字符串
+# 3. 按需调整数据库、密钥、GeoIP 等路径
+
+server:
+  port: 8080
+  mode: release
+  read_timeout: 10s
+  write_timeout: 10s
+
+database:
+  path: ./data/cerberus.db
+
+license:
+  private_key_path: ./keys/private.pem
+  public_key_path: ./keys/public.pem
+  max_machines: 1
+  heartbeat_ttl: 5m
+
+auth:
+  admin_token: change-me-admin-token
+  jwt_secret: change-me-jwt-secret
+  jwt_ttl: 24h
+
+rate_limit:
+  enabled: true
+  rps: 20
+  burst: 40
+
+geoip:
+  enabled: false
+  policy: allow
+  allowed_distance: 50
+  database_path: ./data/GeoLite2-City.mmdb

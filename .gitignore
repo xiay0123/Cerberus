@@ -1,0 +1,46 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/cerberus
+/server/cerberus-server
+/cli/cerberus-client*
+
+# Runtime data and secrets
+**/data/
+**/keys/
+*.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
+*.crt
+*.mmdb
+
+# Local config
+server/config.yaml
+config.local.yaml
+*.local.yaml
+
+# Local scratch files
+check_db.go
+test_geoip.go
+*.log
+*.tmp
+*.bak
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# IDE and local tooling
+.idea/
+.claude/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
