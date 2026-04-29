@@ -2,236 +2,84 @@ openapi: 3.0.3
 info:
   title: Cerberus License API
   description: |
-    Cerberus 软件授权管理系统 API 文档
+    Cerberus 软件授权管理系统 API 文档。
 
     ## 认证方式
     - 公开接口：无需认证
-    - 管理接口：需要在 Header 中携带 `Authorization: Bearer <token>`
+    - 管理接口：支持 `Authorization: Bearer <jwt>` 或 `Authorization: Bearer <admin_token>`
+    - JWT 可通过 `/auth/login` 使用管理员令牌换取
 
     ## 统一响应格式
-    所有接口返回统一的 JSON 格式：
+    除 `/health` 外，业务接口统一返回：
     ```json
     {
       "code": 0,
       "message": "ok",
-      "data": {...}
+      "data": {}
     }
     ```
-    - `code`: 0 表示成功，非 0 表示错误
-    - `message`: 响应消息
-    - `data`: 响应数据
   version: 1.0.0
   contact:
     name: Cerberus Team
 
 servers:
   - url: http://localhost:8080
-    description: 本地开发服务器
+    description: 默认本地服务器
+  - url: http://localhost:8010
+    description: 示例配置服务器
 
 tags:
   - name: Health
     description: 健康检查
   - name: Auth
-    description: 认证相关
+    description: 管理员认证
   - name: Public
-    description: 公开接口（无需认证）
+    description: 客户端公开接口
   - name: License
-    description: License 管理接口（需要认证）
+    description: License 管理接口
   - name: Machine
-    description: 机器管理接口（需要认证）
+    description: 机器管理接口
 
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-      description: JWT Token 认证
+      bearerFormat: JWT or admin token
+      description: 管理接口认证。可使用登录返回的 JWT，也可直接使用管理员令牌。
 
   schemas:
-    # ==================== 通用响应 ====================
     APIResponse:
       type: object
+      required:
+        - code
+        - message
       properties:
         code:
           type: integer
-          description: 业务状态码，0 表示成功
+          description: 业务状态码。成功为 0，失败时与 HTTP 状态码一致。
           example: 0
         message:
           type: string
-          description: 响应消息
-          example: "ok"
+          description: 响应消息。
+          example: ok
         data:
-          type: object
-          description: 响应数据
+          nullable: true
+          description: 响应数据。失败响应通常不返回该字段。
 
-    # ==================== License 相关 ====================
-    License:
+    ErrorResponse:
       type: object
+      required:
+        - code
+        - message
       properties:
-        id:
-          type: string
-          description: License 唯一标识符（UUID）
-          example: "550e8400-e29b-41d4-a716-446655440000"
-        name:
-          type: string
-          description: 许可证名称
-          example: "My License"
-        product:
-          type: string
-          description: 产品标识
-          example: "MyApp"
-        issuer:
-          type: string
-          description: 发行者
-          example: "admin"
-        max_machines:
+        code:
           type: integer
-          description: 最大绑定机器数
-          example: 3
-        ip_binding_enabled:
-          type: boolean
-          description: 是否启用 IP 绑定
-          example: false
-        valid_from:
-          type: integer
-          format: int64
-          description: 有效期起始时间（Unix 时间戳）
-          example: 1680000000
-        valid_until:
-          type: integer
-          format: int64
-          description: 有效期截止时间（Unix 时间戳）
-          example: 1711536000
-        duration_sec:
-          type: integer
-          format: int64
-          description: 授权时长（秒）
-          example: 31536000
-        status:
+          example: 400
+        message:
           type: string
-          description: License 状态
-          enum: [active, revoked, expired, suspended]
-          example: "active"
-        max_unbind_count:
-          type: integer
-          description: 最大换绑次数
-          example: 3
-        unbind_count:
-          type: integer
-          description: 已用换绑次数
-          example: 0
-        machines:
-          type: array
-          description: 关联的机器列表
-          items:
-            $ref: '#/components/schemas/Machine'
-        created_at:
-          type: string
-          format: date-time
-          description: 创建时间
-        updated_at:
-          type: string
-          format: date-time
-          description: 更新时间
+          example: invalid request
 
-    Machine:
-      type: object
-      properties:
-        id:
-          type: string
-          description: 机器唯一标识符（UUID）
-          example: "660e8400-e29b-41d4-a716-446655440000"
-        license_id:
-          type: string
-          description: 所属 License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
-        fingerprint:
-          type: string
-          description: 机器指纹（硬件信息哈希）
-          example: "abc123def456..."
-        hostname:
-          type: string
-          description: 主机名
-          example: "MyPC"
-        os:
-          type: string
-          description: 操作系统
-          example: "windows"
-        arch:
-          type: string
-          description: 系统架构
-          example: "amd64"
-        ip:
-          type: string
-          description: 当前 IP 地址
-          example: "192.168.1.100"
-        ip_binding:
-          type: string
-          description: 绑定的 IP 地址
-          example: "192.168.1.100"
-        last_seen:
-          type: string
-          format: date-time
-          description: 最后活跃时间
-        status:
-          type: string
-          description: 机器状态
-          enum: [active, revoked]
-          example: "active"
-        geo_country:
-          type: string
-          description: 地理位置国家代码
-          example: "CN"
-        geo_region:
-          type: string
-          description: 地理位置地区代码
-          example: "Beijing"
-        geo_city:
-          type: string
-          description: 地理位置城市
-          example: "Beijing"
-        geo_latitude:
-          type: number
-          format: double
-          description: 纬度
-          example: 39.9042
-        geo_longitude:
-          type: number
-          format: double
-          description: 经度
-          example: 116.4074
-        created_at:
-          type: string
-          format: date-time
-          description: 创建时间
-
-    AuditLog:
-      type: object
-      properties:
-        id:
-          type: string
-          description: 审计日志 ID
-        license_id:
-          type: string
-          description: 关联的 License ID
-        action:
-          type: string
-          description: 操作类型
-          example: "activate"
-        detail:
-          type: string
-          description: 操作详情
-          example: "machine activated: abc123..."
-        ip:
-          type: string
-          description: 操作来源 IP
-          example: "192.168.1.100"
-        created_at:
-          type: string
-          format: date-time
-          description: 创建时间
-
-    # ==================== 请求体 ====================
     LoginRequest:
       type: object
       required:
@@ -239,8 +87,195 @@ components:
       properties:
         token:
           type: string
-          description: 管理员令牌
-          example: "cerberus-admin-token-xiay"
+          description: 管理员令牌。
+          example: cerberus-admin-token-change-me
+
+    LoginData:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT Token。
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    LicenseStatus:
+      type: string
+      enum:
+        - active
+        - revoked
+        - expired
+        - suspended
+      description: License 状态。
+
+    MachineStatus:
+      type: string
+      enum:
+        - active
+        - revoked
+        - stale
+      description: 机器状态。
+
+    License:
+      type: object
+      properties:
+        id:
+          type: string
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: License 名称。
+          example: My License
+        product:
+          type: string
+          description: 产品标识。
+          example: MyApp
+        issuer:
+          type: string
+          description: 发行者。
+          example: admin
+        max_machines:
+          type: integer
+          description: 最大绑定机器数。
+          example: 3
+        ip_binding_enabled:
+          type: boolean
+          description: 是否启用 IP 绑定。
+          example: false
+        valid_from:
+          type: integer
+          format: int64
+          description: 有效期起始 Unix 时间戳。
+          example: 1710000000
+        valid_until:
+          type: integer
+          format: int64
+          description: 有效期截止 Unix 时间戳。
+          example: 1741536000
+        duration_sec:
+          type: integer
+          format: int64
+          description: 初始授权时长，单位秒。
+          example: 31536000
+        status:
+          $ref: '#/components/schemas/LicenseStatus'
+        machines:
+          type: array
+          description: 绑定机器列表。详情接口会返回该字段。
+          items:
+            $ref: '#/components/schemas/Machine'
+        max_unbind_count:
+          type: integer
+          description: 最大换绑次数。
+          example: 3
+        unbind_count:
+          type: integer
+          description: 已用换绑次数。
+          example: 0
+        geo_country:
+          type: string
+          description: 首次激活记录的国家代码。
+          example: CN
+        geo_region:
+          type: string
+          description: 首次激活记录的地区。
+          example: Shanghai
+        geo_city:
+          type: string
+          description: 首次激活记录的城市。
+          example: Shanghai
+        geo_latitude:
+          type: number
+          format: double
+          description: 首次激活记录的纬度。
+          example: 31.2304
+        geo_longitude:
+          type: number
+          format: double
+          description: 首次激活记录的经度。
+          example: 121.4737
+        created_at:
+          type: string
+          format: date-time
+          description: 创建时间。
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新时间。
+
+    Machine:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 机器 ID。
+          example: 660e8400-e29b-41d4-a716-446655440000
+        license_id:
+          type: string
+          description: 所属 License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
+        fingerprint:
+          type: string
+          description: 机器指纹。
+          example: abc123def456
+        hostname:
+          type: string
+          description: 主机名。
+          example: MyPC
+        os:
+          type: string
+          description: 操作系统。
+          example: windows
+        arch:
+          type: string
+          description: 系统架构。
+          example: amd64
+        ip:
+          type: string
+          description: 最近一次请求 IP。
+          example: 192.168.1.100
+        ip_binding:
+          type: string
+          description: 启用 IP 绑定时记录的绑定 IP。
+          example: 192.168.1.100
+        last_seen:
+          type: string
+          format: date-time
+          description: 最后活跃时间。
+        status:
+          $ref: '#/components/schemas/MachineStatus'
+        created_at:
+          type: string
+          format: date-time
+          description: 创建时间。
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 审计日志 ID。
+          example: 770e8400-e29b-41d4-a716-446655440000
+        license_id:
+          type: string
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
+        action:
+          type: string
+          description: 操作类型。
+          example: activate
+        detail:
+          type: string
+          description: 操作详情。
+          example: machine activated: abc123def456
+        ip:
+          type: string
+          description: 操作来源 IP。
+          example: 192.168.1.100
+        created_at:
+          type: string
+          format: date-time
+          description: 创建时间。
 
     CreateLicenseRequest:
       type: object
@@ -251,88 +286,82 @@ components:
       properties:
         name:
           type: string
-          description: 许可证名称
-          example: "My License"
+          description: License 名称。
+          example: My License
         product:
           type: string
-          description: 产品标识
-          example: "MyApp"
+          description: 产品标识。
+          example: MyApp
         issuer:
           type: string
-          description: 发行者
-          example: "admin"
+          description: 发行者。
+          example: admin
         max_machines:
           type: integer
-          description: 最大绑定机器数
-          default: 1
+          description: 最大绑定机器数。小于等于 0 时使用服务端默认值。
           example: 3
         duration_sec:
           type: integer
           format: int64
-          description: 有效时长（秒）
+          description: 有效时长，单位秒，必须大于 0。
           example: 31536000
         max_unbind_count:
           type: integer
-          description: 最大换绑次数
-          default: 3
-          example: 5
+          description: 最大换绑次数。小于等于 0 时默认为 3。
+          example: 3
         ip_binding_enabled:
           type: boolean
-          description: 是否启用 IP 绑定
-          default: false
+          description: 是否启用 IP 绑定。
+          example: false
 
-    GetLicenseRequest:
+    IDRequest:
       type: object
       required:
         - id
       properties:
         id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
 
     ListLicenseRequest:
       type: object
       properties:
         page:
           type: integer
-          description: 页码
-          default: 1
+          description: 页码，从 1 开始。小于等于 0 时按 1 处理。
           example: 1
         size:
           type: integer
-          description: 每页数量
-          default: 20
+          description: 每页数量。小于等于 0 时按 20 处理，大于 100 时按 100 处理。
           example: 20
         status:
-          type: string
-          description: 状态筛选
-          enum: [active, revoked, expired, suspended]
-          example: "active"
+          $ref: '#/components/schemas/LicenseStatus'
         product:
           type: string
-          description: 产品筛选
-          example: "MyApp"
+          description: 产品筛选。
+          example: MyApp
 
-    DeleteLicenseRequest:
+    ListLicenseData:
       type: object
-      required:
-        - id
       properties:
-        id:
-          type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-    RevokeLicenseRequest:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/License'
+        total:
+          type: integer
+          format: int64
+          description: 总数量。
+          example: 100
+        page:
+          type: integer
+          description: 请求页码。
+          example: 1
+        size:
+          type: integer
+          description: 请求每页数量。
+          example: 20
 
     RenewLicenseRequest:
       type: object
@@ -342,12 +371,12 @@ components:
       properties:
         id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         duration_sec:
           type: integer
           format: int64
-          description: 续期时长（秒）
+          description: 续期时长，单位秒，必须大于 0。
           example: 31536000
 
     UnsuspendLicenseRequest:
@@ -357,22 +386,12 @@ components:
       properties:
         id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         reset_unbind_count:
           type: boolean
-          description: 是否重置换绑计数
-          default: false
-
-    AuditLogsRequest:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: 是否重置换绑计数。
+          example: true
 
     RevokeMachineRequest:
       type: object
@@ -382,14 +401,13 @@ components:
       properties:
         license_id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         machine_id:
           type: string
-          description: 机器 ID
-          example: "660e8400-e29b-41d4-a716-446655440000"
+          description: 机器 ID。
+          example: 660e8400-e29b-41d4-a716-446655440000
 
-    # ==================== 公开接口请求 ====================
     ActivateRequest:
       type: object
       required:
@@ -398,28 +416,42 @@ components:
       properties:
         license_id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         fingerprint:
           type: string
-          description: 机器指纹
-          example: "abc123def456..."
+          description: 机器指纹。
+          example: abc123def456
         hostname:
           type: string
-          description: 主机名
-          example: "MyPC"
+          description: 主机名。
+          example: MyPC
         os:
           type: string
-          description: 操作系统
-          example: "windows"
+          description: 操作系统。
+          example: windows
         arch:
           type: string
-          description: 系统架构
-          example: "amd64"
+          description: 系统架构。
+          example: amd64
         ip:
           type: string
-          description: IP 地址
-          example: "192.168.1.100"
+          description: 可选 IP。为空时服务端从请求头或连接信息获取。
+          example: 192.168.1.100
+
+    ActivateData:
+      type: object
+      properties:
+        machine:
+          $ref: '#/components/schemas/Machine'
+        geoip_alert:
+          type: string
+          description: GeoIP 异地告警信息。无告警时为空字符串。
+          example: remote login detected
+        is_new_machine:
+          type: boolean
+          description: 是否为新激活机器。
+          example: true
 
     VerifyRequest:
       type: object
@@ -428,16 +460,54 @@ components:
       properties:
         license_id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         fingerprint:
           type: string
-          description: 机器指纹（可选）
-          example: "abc123def456..."
+          description: 可选机器指纹。提供时会校验机器绑定状态。
+          example: abc123def456
         ip:
           type: string
-          description: IP 地址（可选）
-          example: "192.168.1.100"
+          description: 可选 IP。为空时服务端从请求头或连接信息获取。
+          example: 192.168.1.100
+
+    VerifyResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: License 是否有效。
+          example: true
+        license_id:
+          type: string
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
+        product:
+          type: string
+          description: 产品标识。
+          example: MyApp
+        reason:
+          type: string
+          description: 无效原因。
+          example: license expired
+        expires_in:
+          type: integer
+          format: int64
+          description: 剩余有效时间，单位秒。
+          example: 86400
+        expires_at:
+          type: integer
+          format: int64
+          description: 过期 Unix 时间戳。
+          example: 1741536000
+        machine_id:
+          type: string
+          description: 已激活机器 ID。
+          example: 660e8400-e29b-41d4-a716-446655440000
+        max_machines:
+          type: integer
+          description: 最大绑定机器数。
+          example: 3
 
     HeartbeatRequest:
       type: object
@@ -447,16 +517,16 @@ components:
       properties:
         license_id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         fingerprint:
           type: string
-          description: 机器指纹
-          example: "abc123def456..."
+          description: 机器指纹。
+          example: abc123def456
         ip:
           type: string
-          description: IP 地址
-          example: "192.168.1.100"
+          description: 可选 IP。为空时服务端从请求头或连接信息获取。
+          example: 192.168.1.100
 
     UnbindRequest:
       type: object
@@ -466,41 +536,98 @@ components:
       properties:
         license_id:
           type: string
-          description: License ID
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: License ID。
+          example: 550e8400-e29b-41d4-a716-446655440000
         old_fingerprint:
           type: string
-          description: 要解绑的机器指纹
-          example: "abc123def456..."
+          description: 要解绑的旧机器指纹。
+          example: abc123def456
+
+    UnbindResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        machine_revoked:
+          type: string
+          description: 被吊销的机器 ID。
+          example: 660e8400-e29b-41d4-a716-446655440000
+        remaining:
+          type: integer
+          description: 剩余换绑次数。
+          example: 2
+        message:
+          type: string
+          description: 换绑结果说明。
+          example: machine unbound, 2 unbind operations remaining
+
+    MessageData:
+      type: object
+      properties:
+        message:
+          type: string
+          example: operation completed successfully
+
+  responses:
+    BadRequest:
+      description: 请求参数错误或业务校验失败。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: 未认证或认证失败。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: 认证令牌无效。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: 资源不存在。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ServerError:
+      description: 服务端错误。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
 
 paths:
-  # ==================== 健康检查 ====================
   /health:
     get:
       tags:
         - Health
       summary: 健康检查
-      description: 检查服务是否正常运行
       operationId: health
       responses:
         '200':
-          description: 服务正常
+          description: 服务正常。
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - status
                 properties:
                   status:
                     type: string
-                    example: "ok"
+                    example: ok
 
-  # ==================== 认证 ====================
   /auth/login:
     post:
       tags:
         - Auth
       summary: 管理员登录
-      description: 使用管理员令牌登录，获取 JWT Token 用于后续管理接口调用
+      description: 使用管理员令牌换取 JWT Token。
       operationId: login
       requestBody:
         required: true
@@ -510,7 +637,7 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: 登录成功
+          description: 登录成功。
           content:
             application/json:
               schema:
@@ -519,39 +646,20 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          token:
-                            type: string
-                            description: JWT Token
-                            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        $ref: '#/components/schemas/LoginData'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
         '403':
-          description: 令牌无效
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
 
-  # ==================== 公开接口 ====================
   /api/v1/activate:
     post:
       tags:
         - Public
       summary: 激活机器
-      description: |
-        客户端使用此接口激活机器绑定。
-
-        **流程：**
-        1. 验证 License 是否有效
-        2. 检查机器绑定数量是否已达上限
-        3. 绑定当前机器
-        4. 返回激活结果（包含地理位置告警信息）
+      description: 客户端激活机器并绑定到指定 License。已存在机器会更新机器信息和最后活跃时间。
       operationId: activate
       requestBody:
         required: true
@@ -561,7 +669,7 @@ paths:
               $ref: '#/components/schemas/ActivateRequest'
       responses:
         '200':
-          description: 激活成功
+          description: 激活成功。
           content:
             application/json:
               schema:
@@ -570,37 +678,16 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          machine:
-                            $ref: '#/components/schemas/Machine'
-                          geoip_alert:
-                            type: string
-                            description: 地理位置告警信息
-                            example: "remote login detected (800 km away)"
-                          is_new_machine:
-                            type: boolean
-                            description: 是否为新机器
+                        $ref: '#/components/schemas/ActivateData'
         '400':
-          description: 激活失败（License 无效、机器数量超限等）
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
 
   /api/v1/verify:
     post:
       tags:
         - Public
       summary: 验证 License
-      description: |
-        客户端使用此接口验证 License 有效性。
-
-        **验证内容：**
-        - License 是否存在
-        - License 是否已过期
-        - License 是否已被吊销
-        - 机器是否已绑定（如提供 fingerprint）
+      description: 验证 License 状态、有效期、机器绑定状态和 IP 绑定。
       operationId: verify
       requestBody:
         required: true
@@ -610,7 +697,7 @@ paths:
               $ref: '#/components/schemas/VerifyRequest'
       responses:
         '200':
-          description: 验证成功
+          description: 验证完成。验证失败也会以 200 返回，结果体中 `valid=false` 并包含 `reason`。
           content:
             application/json:
               schema:
@@ -619,37 +706,16 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          valid:
-                            type: boolean
-                            description: License 是否有效
-                            example: true
-                          license_id:
-                            type: string
-                            description: License ID
-                            example: "550e8400-e29b-41d4-a716-446655440000"
-                          product:
-                            type: string
-                            description: 产品标识
-                            example: "MyApp"
-                          expires_in:
-                            type: integer
-                            description: 剩余有效时间（秒）
-                            example: 86400
+                        $ref: '#/components/schemas/VerifyResult'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
 
   /api/v1/heartbeat:
     post:
       tags:
         - Public
       summary: 心跳上报
-      description: 客户端定期上报心跳，更新机器最后活跃时间
+      description: 客户端上报心跳，更新机器最后活跃时间和最近 IP。
       operationId: heartbeat
       requestBody:
         required: true
@@ -659,30 +725,21 @@ paths:
               $ref: '#/components/schemas/HeartbeatRequest'
       responses:
         '200':
-          description: 心跳上报成功
+          description: 心跳上报成功。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIResponse'
         '400':
-          description: 心跳上报失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
 
   /api/v1/unbind:
     post:
       tags:
         - Public
       summary: 客户端自助换绑
-      description: |
-        客户端自助解绑旧机器，以便绑定新机器。
-
-        **注意：**
-        - 换绑次数有限制（由 max_unbind_count 控制）
-        - 超过限制后 License 会被暂停
-      operationId: unbind
+      description: 将指定机器标记为 revoked，并递增 License 的换绑计数。超过限制时 License 会变为 suspended。
+      operationId: unbindMachine
       requestBody:
         required: true
         content:
@@ -691,7 +748,7 @@ paths:
               $ref: '#/components/schemas/UnbindRequest'
       responses:
         '200':
-          description: 换绑成功
+          description: 换绑成功。
           content:
             application/json:
               schema:
@@ -700,32 +757,15 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          success:
-                            type: boolean
-                            example: true
-                          remaining:
-                            type: integer
-                            description: 剩余换绑次数
-                            example: 2
-                          message:
-                            type: string
-                            example: "machine unbound successfully"
+                        $ref: '#/components/schemas/UnbindResult'
         '400':
-          description: 换绑失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
 
-  # ==================== License 管理接口 ====================
   /api/v1/licenses/create:
     post:
       tags:
         - License
       summary: 创建 License
-      description: 创建新的软件授权许可证
       operationId: createLicense
       security:
         - BearerAuth: []
@@ -737,7 +777,7 @@ paths:
               $ref: '#/components/schemas/CreateLicenseRequest'
       responses:
         '201':
-          description: 创建成功
+          description: 创建成功。
           content:
             application/json:
               schema:
@@ -748,24 +788,18 @@ paths:
                       data:
                         $ref: '#/components/schemas/License'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: 未认证
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /api/v1/licenses/get:
     post:
       tags:
         - License
       summary: 获取 License 详情
-      description: 根据 ID 获取 License 详细信息，包含关联的机器列表
+      description: 根据 ID 获取 License 详情，包含关联机器列表。
       operationId: getLicense
       security:
         - BearerAuth: []
@@ -774,10 +808,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GetLicenseRequest'
+              $ref: '#/components/schemas/IDRequest'
       responses:
         '200':
-          description: 获取成功
+          description: 获取成功。
           content:
             application/json:
               schema:
@@ -788,24 +822,18 @@ paths:
                       data:
                         $ref: '#/components/schemas/License'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
-          description: License 不存在
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/NotFound'
 
   /api/v1/licenses/list:
     post:
       tags:
         - License
       summary: 查询 License 列表
-      description: 分页查询 License 列表，支持状态和产品筛选
+      description: 分页查询 License，支持状态和产品筛选。
       operationId: listLicenses
       security:
         - BearerAuth: []
@@ -817,7 +845,7 @@ paths:
               $ref: '#/components/schemas/ListLicenseRequest'
       responses:
         '200':
-          description: 查询成功
+          description: 查询成功。
           content:
             application/json:
               schema:
@@ -826,37 +854,20 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          items:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/License'
-                          total:
-                            type: integer
-                            description: 总数量
-                            example: 100
-                          page:
-                            type: integer
-                            description: 当前页码
-                            example: 1
-                          size:
-                            type: integer
-                            description: 每页数量
-                            example: 20
+                        $ref: '#/components/schemas/ListLicenseData'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /api/v1/licenses/delete:
     post:
       tags:
         - License
       summary: 删除 License
-      description: 软删除 License，数据不会真正删除，只是标记为已删除
+      description: 软删除 License。
       operationId: deleteLicense
       security:
         - BearerAuth: []
@@ -865,29 +876,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteLicenseRequest'
+              $ref: '#/components/schemas/IDRequest'
       responses:
         '200':
-          description: 删除成功
+          description: 删除成功。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIResponse'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
 
   /api/v1/licenses/revoke:
     post:
       tags:
         - License
       summary: 吊销 License
-      description: |
-        吊销 License，此操作不可逆。
-        License 及其所有机器都将被标记为已吊销。
+      description: 将 License 及其关联机器标记为 revoked。该操作不可逆。
       operationId: revokeLicense
       security:
         - BearerAuth: []
@@ -896,27 +905,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RevokeLicenseRequest'
+              $ref: '#/components/schemas/IDRequest'
       responses:
         '200':
-          description: 吊销成功
+          description: 吊销成功。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIResponse'
         '400':
-          description: 吊销失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/v1/licenses/renew:
     post:
       tags:
         - License
       summary: 续期 License
-      description: 为 License 续期，延长有效期
+      description: 为 License 延长有效期。已过期 License 从当前时间重新计算，未过期 License 在原有效期基础上延长。
       operationId: renewLicense
       security:
         - BearerAuth: []
@@ -928,7 +935,7 @@ paths:
               $ref: '#/components/schemas/RenewLicenseRequest'
       responses:
         '200':
-          description: 续期成功
+          description: 续期成功。
           content:
             application/json:
               schema:
@@ -937,26 +944,18 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          message:
-                            type: string
-                            example: "license renewed successfully"
+                        $ref: '#/components/schemas/MessageData'
         '400':
-          description: 续期失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/v1/licenses/unsuspend:
     post:
       tags:
         - License
       summary: 解封 License
-      description: |
-        当 License 因换绑次数超限被暂停时，管理员可以执行解封。
-        可选择是否重置换绑计数。
+      description: 将 suspended 状态的 License 恢复为 active，可选择重置换绑计数。
       operationId: unsuspendLicense
       security:
         - BearerAuth: []
@@ -968,7 +967,7 @@ paths:
               $ref: '#/components/schemas/UnsuspendLicenseRequest'
       responses:
         '200':
-          description: 解封成功
+          description: 解封成功。
           content:
             application/json:
               schema:
@@ -977,24 +976,18 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          message:
-                            type: string
-                            example: "license unsuspended successfully"
+                        $ref: '#/components/schemas/MessageData'
         '400':
-          description: 解封失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/v1/licenses/audit:
     post:
       tags:
         - License
       summary: 获取审计日志
-      description: 获取指定 License 的所有审计日志
+      description: 获取指定 License 的审计日志，按创建时间倒序返回。
       operationId: getAuditLogs
       security:
         - BearerAuth: []
@@ -1003,10 +996,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuditLogsRequest'
+              $ref: '#/components/schemas/IDRequest'
       responses:
         '200':
-          description: 获取成功
+          description: 获取成功。
           content:
             application/json:
               schema:
@@ -1019,21 +1012,18 @@ paths:
                         items:
                           $ref: '#/components/schemas/AuditLog'
         '400':
-          description: 请求参数错误
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
 
-  # ==================== 机器管理接口 ====================
   /api/v1/licenses/machines/revoke:
     post:
       tags:
         - Machine
-      summary: 吊销机器
-      description: |
-        管理员主动吊销单个机器绑定，让用户能够绑定新机器。
-        与客户端自助换绑不同，此操作不消耗换绑次数。
+      summary: 管理员吊销机器
+      description: 将指定机器标记为 revoked，并递增 License 的换绑计数。
       operationId: revokeMachine
       security:
         - BearerAuth: []
@@ -1045,7 +1035,7 @@ paths:
               $ref: '#/components/schemas/RevokeMachineRequest'
       responses:
         '200':
-          description: 吊销成功
+          description: 吊销成功。
           content:
             application/json:
               schema:
@@ -1054,14 +1044,8 @@ paths:
                   - type: object
                     properties:
                       data:
-                        type: object
-                        properties:
-                          message:
-                            type: string
-                            example: "machine revoked, you can now activate a new device"
+                        $ref: '#/components/schemas/MessageData'
         '400':
-          description: 吊销失败
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIResponse'
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
