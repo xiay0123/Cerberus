@@ -31,6 +31,12 @@
             --shadow: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
             --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.08);
+            --color: #6366f1;
+            --w: 0;
+            --active-deg: 0deg;
+            --expiring-deg: 0deg;
+            --expired-deg: 0deg;
+            --donut-bg: conic-gradient(var(--success) 0deg, var(--warning) 0deg, var(--danger) 0deg, var(--purple) 360deg);
         }
 
         body {
@@ -175,12 +181,12 @@
         .animated-chart { height: 200px; position: relative; overflow: hidden; }
         .product-share { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
         .product-stack { height: 42px; display: flex; border-radius: 14px; overflow: hidden; background: var(--bg-tertiary); box-shadow: inset 0 1px 2px rgba(15,23,42,0.06); }
-        .product-segment { min-width: 6px; width: calc(var(--w) * 1%); background: var(--color); position: relative; animation: growWidth 0.7s cubic-bezier(.2,.8,.2,1) backwards; }
+        .product-segment { min-width: 6px; width: calc(var(--w, 0) * 1%); background: var(--color, #6366f1); position: relative; animation: growWidth 0.7s cubic-bezier(.2,.8,.2,1) backwards; }
         .product-segment + .product-segment { box-shadow: inset 1px 0 0 rgba(255,255,255,0.55); }
         .product-segment:hover { filter: brightness(1.05); }
         .product-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
         .product-legend-item { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 12px; color: var(--text-secondary); }
-        .product-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 12%, transparent); }
+        .product-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color, #6366f1); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color, #6366f1) 12%, transparent); }
         .product-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .product-count { font-size: 12px; font-weight: 700; color: var(--text-primary); }
         .product-summary { font-size: 11px; color: var(--text-muted); text-align: right; }
@@ -189,7 +195,7 @@
         .status-donut-chart { height: 200px; display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: center; }
         .status-donut {
             width: 142px; height: 142px; border-radius: 50%; position: relative;
-            background: conic-gradient(var(--success) 0 var(--active-deg), var(--warning) var(--active-deg) var(--expiring-deg), var(--danger) var(--expiring-deg) var(--expired-deg), var(--purple) var(--expired-deg) 360deg);
+            background: conic-gradient(var(--success) 0 var(--active-deg, 0deg), var(--warning) var(--active-deg, 0deg) var(--expiring-deg, 0deg), var(--danger) var(--expiring-deg, 0deg) var(--expired-deg, 0deg), var(--purple) var(--expired-deg, 0deg) 360deg);
             box-shadow: 0 14px 30px rgba(15,23,42,0.08); animation: fadeInUp 0.35s ease-out backwards;
         }
         .status-donut::before { content: ''; position: absolute; inset: 16px; border-radius: inherit; background: var(--bg-secondary); box-shadow: inset 0 1px 4px rgba(15,23,42,0.06); }
@@ -198,7 +204,7 @@
         .status-total-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         .status-legend { display: flex; flex-direction: column; gap: 10px; }
         .status-legend-item { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; font-size: 12px; color: var(--text-secondary); }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 12%, transparent); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color, #6366f1); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color, #6366f1) 12%, transparent); }
         .status-legend-value { font-weight: 700; color: var(--text-primary); }
         @keyframes growWidth { from { width: 0; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } }
@@ -459,7 +465,7 @@
         .chart-card { min-height: 270px; }
         .chart-title { font-weight: 800; color: var(--text-primary); }
         .product-stack { height: 44px; border-radius: 16px; }
-        .status-donut { background: var(--donut-bg, conic-gradient(var(--success) 0 var(--active-deg), var(--warning) var(--active-deg) var(--expiring-deg), var(--danger) var(--expiring-deg) var(--expired-deg), var(--purple) var(--expired-deg) 360deg)); box-shadow: 0 18px 38px rgba(15,23,42,0.1); }
+        .status-donut { background: var(--donut-bg, conic-gradient(var(--success) 0 var(--active-deg, 0deg), var(--warning) var(--active-deg, 0deg) var(--expiring-deg, 0deg), var(--danger) var(--expiring-deg, 0deg) var(--expired-deg, 0deg), var(--purple) var(--expired-deg, 0deg) 360deg)); box-shadow: 0 18px 38px rgba(15,23,42,0.1); }
         .status-total { font-size: 30px; font-weight: 850; letter-spacing: -0.04em; }
 
         .card { overflow: hidden; }
@@ -504,6 +510,184 @@
         .quick-action-icon { width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(99,102,241,0.12); }
 
         @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        :root {
+            --cyber-bg: #08111f;
+            --cyber-line: rgba(99,102,241,0.18);
+            --cyber-neon: #22d3ee;
+            --cyber-pink: #f472b6;
+            --cyber-green: #34d399;
+            --cyber-shadow: 0 26px 80px rgba(8,17,31,0.2);
+        }
+
+        #app { position: relative; min-height: 100vh; isolation: isolate; }
+        .cyber-shell { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0.42; }
+        .cyber-aurora { position: absolute; inset: -22%; background: radial-gradient(circle at 16% 18%, rgba(34,211,238,0.14), transparent 24rem), radial-gradient(circle at 84% 14%, rgba(99,102,241,0.12), transparent 28rem), radial-gradient(circle at 76% 82%, rgba(244,114,182,0.1), transparent 26rem); filter: blur(10px); animation: auroraDrift 22s ease-in-out infinite alternate; }
+        .cyber-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(99,102,241,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.04) 1px, transparent 1px); background-size: 54px 54px; mask-image: radial-gradient(circle at center, black, transparent 78%); }
+        .login-page, .main-layout { position: relative; z-index: 1; }
+        .toast-container, .modal-overlay { position: fixed; }
+
+        .login-page { background: radial-gradient(circle at 18% 14%, rgba(34,211,238,0.18), transparent 29rem), radial-gradient(circle at 82% 78%, rgba(244,114,182,0.12), transparent 28rem), radial-gradient(circle at 50% 100%, rgba(99,102,241,0.1), transparent 34rem), linear-gradient(135deg, #f8fbff 0%, #eef6ff 48%, #f7f3ff 100%); }
+        .login-page::before { background: radial-gradient(circle, rgba(34,211,238,0.2), transparent 68%); opacity: 0.5; }
+        .login-page::after { background: radial-gradient(circle, rgba(244,114,182,0.14), transparent 68%); opacity: 0.45; }
+        .login-card { z-index: 3; background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(248,250,252,0.9)); border-color: rgba(34,211,238,0.18); box-shadow: 0 28px 70px rgba(15,23,42,0.14), 0 0 0 1px rgba(34,211,238,0.12), inset 0 1px 0 rgba(255,255,255,0.95); }
+        .login-card::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgba(34,211,238,0.55), transparent 30%, rgba(244,114,182,0.34) 58%, rgba(99,102,241,0.48)); opacity: 0.38; z-index: -1; filter: blur(10px); }
+        .login-logo h1 { background: linear-gradient(135deg, #0f172a, #4f46e5 48%, #0891b2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .login-signal { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(15,23,42,0.06); color: #0891b2; font-size: 11px; font-weight: 850; letter-spacing: 0.12em; }
+        .login-signal::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--cyber-green); box-shadow: 0 0 12px var(--cyber-green); }
+
+        .token-rain { position: absolute; inset: -24vh 0 0; overflow: hidden; pointer-events: none; z-index: 1; mask-image: linear-gradient(to bottom, transparent, black 11%, black 82%, transparent); }
+        .token-rain span { position: absolute; left: calc(var(--x) * 1%); top: -14vh; font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace; font-size: clamp(11px, 1.05vw, 15px); font-weight: 800; color: rgba(8,145,178,0.34); text-shadow: 0 0 12px rgba(34,211,238,0.22); opacity: var(--o, .42); writing-mode: vertical-rl; letter-spacing: 0.18em; animation: tokenFall var(--dur, 11s) linear infinite; animation-delay: var(--d, 0s); }
+        .token-rain span:nth-child(3n) { color: rgba(168,85,247,0.28); text-shadow: 0 0 14px rgba(168,85,247,0.18); }
+        .token-rain span:nth-child(4n) { color: rgba(5,150,105,0.28); text-shadow: 0 0 12px rgba(52,211,153,0.16); }
+
+        .glitch-tear { display: none; }
+
+        .main-layout { background: radial-gradient(circle at 16% 8%, rgba(99,102,241,0.12), transparent 31rem), radial-gradient(circle at 88% 16%, rgba(34,211,238,0.1), transparent 27rem), transparent; }
+        .sidebar { background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.76)); border-right-color: rgba(99,102,241,0.18); box-shadow: 18px 0 60px rgba(15,23,42,0.07); }
+        .mobile-topbar { box-shadow: 0 12px 34px rgba(15,23,42,0.08); }
+        .page-title { background: linear-gradient(135deg, #0f172a, #4f46e5 55%, #0891b2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .chart-card, .card, .verify-tool, .quick-action { background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.8)); border-color: rgba(148,163,184,0.34); box-shadow: 0 20px 58px rgba(15,23,42,0.09), inset 0 1px 0 rgba(255,255,255,0.82); }
+        .stat-card { border-color: rgba(148,163,184,0.34); box-shadow: 0 18px 48px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.84); }
+        .stat-card:nth-child(1)::after { background: radial-gradient(circle, rgba(99,102,241,0.12), transparent 70%); }
+        .stat-card:nth-child(2)::after { background: radial-gradient(circle, rgba(16,185,129,0.12), transparent 70%); }
+        .stat-card:nth-child(3)::after { background: radial-gradient(circle, rgba(245,158,11,0.13), transparent 70%); }
+        .stat-card:nth-child(4)::after { background: radial-gradient(circle, rgba(239,68,68,0.11), transparent 70%); }
+        .data-table th { background: linear-gradient(180deg, rgba(248,250,252,0.98), rgba(241,245,249,0.94)); }
+        .data-table td { background: rgba(255,255,255,0.84); }
+        .data-table tr:hover td { background: rgba(239,246,255,0.9); }
+        .status-donut { filter: drop-shadow(0 0 18px rgba(34,211,238,0.12)); }
+        .copy-id { box-shadow: inset 0 0 0 1px rgba(99,102,241,0.12); }
+        .btn-primary { box-shadow: 0 14px 30px rgba(34,211,238,0.2), 0 8px 22px rgba(99,102,241,0.2); }
+
+        .main-content::before { content: ''; position: fixed; inset: 0 0 0 264px; pointer-events: none; z-index: -1; background: radial-gradient(circle at 24% 16%, rgba(34,211,238,0.08), transparent 24rem), radial-gradient(circle at 82% 28%, rgba(99,102,241,0.07), transparent 26rem); }
+        .sidebar-brand { position: relative; }
+        .sidebar-brand::after { content: 'LICENSE ORBIT'; display: inline-flex; margin-left: auto; padding: 4px 8px; border-radius: 999px; background: rgba(34,211,238,0.08); color: #0891b2; font-size: 10px; font-weight: 850; letter-spacing: 0.08em; }
+        .nav-item { position: relative; overflow: hidden; }
+        .nav-item::after { content: ''; position: absolute; inset: 8px auto 8px 0; width: 3px; border-radius: 999px; background: linear-gradient(var(--accent), var(--cyan)); opacity: 0; transition: opacity 0.18s ease; }
+        .nav-item.active::after, .nav-item:hover::after { opacity: 1; }
+        .nav-item.active { transform: translateX(2px); }
+
+        .page-header { position: relative; padding: 20px 22px; border: 1px solid rgba(226,232,240,0.72); border-radius: 24px; background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(240,249,255,0.68)); box-shadow: 0 18px 46px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.9); overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; width: 210px; height: 210px; right: -78px; top: -120px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,0.16), transparent 68%); pointer-events: none; }
+        .page-header::after { content: ''; position: absolute; left: 22px; right: 22px; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(34,211,238,0.42), rgba(99,102,241,0.28), transparent); }
+        .page-header > * { position: relative; z-index: 1; }
+        .page-subtitle { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 999px; background: rgba(15,23,42,0.04); color: #64748b; }
+        .page-subtitle::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--cyber-green); box-shadow: 0 0 10px rgba(52,211,153,0.65); }
+
+        .stat-card { position: relative; overflow: hidden; cursor: pointer; }
+        .stat-card::before { box-shadow: 0 0 18px currentColor; opacity: 0.88; }
+        .stat-card:hover .stat-icon { transform: rotate(-6deg) scale(1.08); }
+        .stat-icon { transition: transform 0.18s ease, box-shadow 0.18s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 24px rgba(99,102,241,0.12); }
+        .stat-value { text-shadow: 0 10px 28px rgba(99,102,241,0.1); }
+
+        .chart-row { align-items: stretch; }
+        .chart-card { position: relative; overflow: hidden; }
+        .chart-card::before, .card::before, .verify-tool::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(120deg, transparent 0%, rgba(34,211,238,0.06) 42%, rgba(99,102,241,0.05) 55%, transparent 76%); opacity: 0.8; }
+        .chart-card > *, .card > *, .verify-tool > * { position: relative; z-index: 1; }
+        .chart-title, .card-title, .detail-section-title { display: inline-flex; align-items: center; gap: 8px; }
+        .chart-title::after, .card-title::after { content: ''; width: 34px; height: 6px; border-radius: 999px; background: linear-gradient(90deg, rgba(34,211,238,0.45), rgba(99,102,241,0.18)); }
+        .product-stack { padding: 4px; background: rgba(15,23,42,0.04); box-shadow: inset 0 1px 2px rgba(15,23,42,0.08); }
+        .product-segment { box-shadow: 0 8px 20px color-mix(in srgb, var(--color, #6366f1) 22%, transparent); }
+        .status-donut { position: relative; }
+        .status-donut::after { content: ''; position: absolute; inset: -10px; border: 1px solid rgba(34,211,238,0.18); border-radius: 50%; pointer-events: none; }
+        .status-legend-item, .product-legend-item { border-radius: 14px; padding: 8px 10px; background: rgba(255,255,255,0.64); border: 1px solid rgba(226,232,240,0.68); }
+
+        .quick-actions { gap: 16px; }
+        .quick-action { position: relative; overflow: hidden; border: 1px solid rgba(226,232,240,0.78); transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+        .quick-action::after { content: ''; position: absolute; width: 110px; height: 110px; right: -42px; top: -44px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,0.12), transparent 72%); }
+        .quick-action:hover { transform: translateY(-3px); border-color: rgba(34,211,238,0.34); box-shadow: 0 20px 48px rgba(15,23,42,0.1); }
+        .quick-action-icon { position: relative; z-index: 1; background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.16)); }
+        .quick-action-label, .quick-action-desc { position: relative; z-index: 1; }
+        .verify-tool-header { padding: 2px; border-radius: 18px; background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(34,211,238,0.08)); }
+        .verify-result { box-shadow: inset 0 1px 0 rgba(255,255,255,0.74), 0 18px 38px rgba(15,23,42,0.06); }
+
+        .toolbar { padding: 14px; border: 1px solid rgba(226,232,240,0.78); border-radius: 22px; background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(240,249,255,0.62)); box-shadow: 0 14px 34px rgba(15,23,42,0.05); }
+        .search-box::after { content: '⌘K'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); padding: 2px 7px; border-radius: 7px; background: rgba(15,23,42,0.05); color: var(--text-muted); font-size: 11px; font-weight: 800; pointer-events: none; }
+        .search-input { padding-right: 54px; }
+        .filter-select, .search-input { box-shadow: inset 0 1px 0 rgba(255,255,255,0.9); }
+        .data-table th:first-child, .data-table td:first-child { border-left: 3px solid transparent; }
+        .data-table tr:hover td:first-child { border-left-color: rgba(34,211,238,0.55); }
+        .data-table tbody tr { transition: transform 0.16s ease; }
+        .data-table tbody tr:hover { transform: translateX(2px); }
+        .badge { box-shadow: inset 0 1px 0 rgba(255,255,255,0.72); }
+        .action-btn { border-color: rgba(226,232,240,0.86); box-shadow: 0 6px 16px rgba(15,23,42,0.05); }
+        .action-btn:hover { border-color: rgba(34,211,238,0.32); background: #f8fcff; }
+
+        .device-card, .detail-item, .export-box { background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(248,250,252,0.8)); border-color: rgba(226,232,240,0.78); box-shadow: inset 0 1px 0 rgba(255,255,255,0.78); }
+        .device-card { position: relative; overflow: hidden; }
+        .device-card::after { content: ''; position: absolute; width: 82px; height: 82px; right: -32px; bottom: -38px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,0.1), transparent 70%); pointer-events: none; }
+        .device-id, .export-value { box-shadow: inset 0 0 0 1px rgba(99,102,241,0.08); }
+        .progress-bar { background: rgba(15,23,42,0.06); overflow: hidden; }
+        .progress-fill { box-shadow: 0 0 18px rgba(34,211,238,0.18); }
+
+        .modal-content { background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.94)); box-shadow: 0 30px 90px rgba(15,23,42,0.22); }
+        .modal-header { background: linear-gradient(135deg, rgba(240,249,255,0.82), rgba(255,255,255,0.92)); }
+
+        .insight-card, .status-command-card { min-height: 250px; padding: 16px; }
+        .insight-panel { min-height: 184px; display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
+        .insight-hero { position: relative; padding: 10px 13px; border-radius: 18px; overflow: hidden; background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(240,249,255,0.82)); border: 1px solid rgba(186,230,253,0.64); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 16px 38px rgba(15,23,42,0.08); }
+        .insight-hero::after { content: ''; position: absolute; width: 120px; height: 120px; right: -48px; top: -60px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,0.16), transparent 68%); pointer-events: none; }
+        .insight-kicker { position: relative; z-index: 1; color: #0891b2; font-size: 9px; font-weight: 950; letter-spacing: 0.15em; }
+        .insight-metric { position: relative; z-index: 1; display: flex; align-items: flex-end; gap: 7px; margin-top: 5px; }
+        .insight-number { font-size: 34px; line-height: 0.9; font-weight: 950; letter-spacing: -0.08em; background: linear-gradient(135deg, #2563eb, #06b6d4 64%, #10b981); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .insight-label { padding-bottom: 4px; color: var(--text-secondary); font-size: 12px; font-weight: 850; }
+        .insight-subline { position: relative; z-index: 1; margin-top: 5px; color: var(--text-muted); font-size: 11px; font-weight: 750; }
+        .insight-list { display: grid; gap: 5px; }
+        .insight-row { position: relative; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 9px; border-radius: 13px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.78)); border: 1px solid rgba(226,232,240,0.78); cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
+        .insight-row::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--color, #6366f1); opacity: 0.72; }
+        .insight-row:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--color, #6366f1) 28%, rgba(226,232,240,0.9)); box-shadow: 0 14px 28px color-mix(in srgb, var(--color, #6366f1) 12%, transparent); }
+        .insight-rank { position: relative; z-index: 1; width: 22px; height: 22px; border-radius: 8px; display: grid; place-items: center; color: var(--text-primary); font-size: 10px; font-weight: 950; background: color-mix(in srgb, var(--color, #6366f1) 13%, white); box-shadow: inset 0 1px 0 rgba(255,255,255,0.82); }
+        .insight-main { position: relative; z-index: 1; min-width: 0; }
+        .insight-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary); font-size: 12px; font-weight: 900; }
+        .insight-bar { height: 5px; margin-top: 4px; border-radius: 999px; overflow: hidden; background: rgba(15,23,42,0.055); }
+        .insight-bar span { display: block; width: calc(var(--w, 0) * 1%); height: 100%; border-radius: inherit; background: linear-gradient(90deg, color-mix(in srgb, var(--color, #6366f1) 60%, white), var(--color, #6366f1)); animation: growWidth 0.7s cubic-bezier(.2,.8,.2,1) backwards; }
+        .insight-value { position: relative; z-index: 1; text-align: right; }
+        .insight-value strong { display: block; color: var(--text-primary); font-size: 15px; line-height: 1; font-weight: 950; }
+        .insight-value span { display: block; margin-top: 3px; color: var(--text-muted); font-size: 10px; font-weight: 850; }
+        .insight-empty { min-height: 210px; display: grid; place-items: center; align-content: center; gap: 8px; text-align: center; color: var(--text-muted); }
+        .insight-empty-icon { width: 72px; height: 72px; border-radius: 26px; display: grid; place-items: center; background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(99,102,241,0.1)); color: #0891b2; font-size: 30px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9); }
+        .insight-empty-title { color: var(--text-primary); font-size: 16px; font-weight: 900; }
+        .insight-empty p { margin: 0; font-size: 13px; }
+        .insight-note { margin-top: auto; align-self: flex-end; color: var(--text-muted); font-size: 11px; font-weight: 750; }
+
+        .status-command { min-height: 184px; height: 100%; display: grid; grid-template-rows: 66px 1fr; gap: 7px; padding-top: 2px; }
+        .status-summary { position: relative; min-height: 66px; padding: 8px 12px; border-radius: 18px; overflow: hidden; background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(248,250,252,0.82)); border: 1px solid rgba(226,232,240,0.78); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 16px 38px rgba(15,23,42,0.08); cursor: pointer; }
+        .status-summary::after { content: ''; position: absolute; width: 140px; height: 140px; right: -50px; top: -62px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.14), transparent 68%); pointer-events: none; }
+        .status-summary-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--text-muted); font-size: 10px; font-weight: 850; }
+        .status-summary-top span { color: #4f46e5; letter-spacing: 0.12em; font-weight: 950; }
+        .status-summary-top strong { color: var(--text-secondary); }
+        .status-total-line { position: relative; z-index: 1; display: flex; align-items: flex-end; gap: 7px; margin-top: 2px; }
+        .status-total-number { font-size: 26px; line-height: 0.9; font-weight: 950; letter-spacing: -0.08em; background: linear-gradient(135deg, #4f46e5, #06b6d4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .status-total-text { padding-bottom: 1px; color: var(--text-secondary); font-size: 12px; font-weight: 850; }
+        .status-strip { position: relative; z-index: 1; display: flex; height: 8px; margin-top: 6px; border-radius: 999px; background: rgba(15,23,42,0.055); overflow: hidden; box-shadow: inset 0 1px 2px rgba(15,23,42,0.08); }
+        .status-strip.empty { background: linear-gradient(90deg, rgba(226,232,240,0.75), rgba(241,245,249,0.9)); }
+        .status-strip-seg { min-width: 0; height: 100%; }
+        .status-strip-seg.active { background: linear-gradient(90deg, #34d399, #10b981); }
+        .status-strip-seg.expiring { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+        .status-strip-seg.expired { background: linear-gradient(90deg, #fb7185, #ef4444); }
+        .status-strip-seg.revoked { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+        .status-command-grid { display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); gap: 5px; min-height: 112px; }
+        .status-tile { position: relative; min-height: 0; padding: 6px 9px; border-radius: 13px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr; gap: 4px 9px; align-items: center; overflow: hidden; cursor: pointer; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.78)); border: 1px solid rgba(226,232,240,0.82); transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
+        .status-tile::before { content: ''; position: absolute; width: 82px; height: 82px; right: -34px; top: -36px; border-radius: 50%; background: color-mix(in srgb, var(--color, #6366f1) 16%, transparent); pointer-events: none; }
+        .status-tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--color, #6366f1) 30%, rgba(226,232,240,0.9)); box-shadow: 0 14px 28px color-mix(in srgb, var(--color, #6366f1) 12%, transparent); }
+        .status-tile-head { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .status-tile-icon { width: 20px; height: 20px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--color, #6366f1) 13%, white); font-size: 12px; }
+        .status-tile-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); font-size: 11px; font-weight: 850; }
+        .status-tile-body { position: relative; z-index: 1; grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 3px; }
+        .status-tile-count { color: var(--text-primary); font-size: 18px; line-height: 1; font-weight: 950; letter-spacing: -0.05em; }
+        .status-tile-percent { color: var(--text-muted); font-size: 10px; font-weight: 850; }
+        .status-tile-bar { position: relative; z-index: 1; grid-column: 1; grid-row: 2; height: 5px; border-radius: 999px; overflow: hidden; background: rgba(15,23,42,0.055); }
+        .status-tile-bar span { display: block; width: calc(var(--w, 0) * 1%); height: 100%; border-radius: inherit; background: linear-gradient(90deg, color-mix(in srgb, var(--color, #6366f1) 60%, white), var(--color, #6366f1)); animation: growWidth 0.7s cubic-bezier(.2,.8,.2,1) backwards; }
+
+        @keyframes tokenFall { from { transform: translate3d(0,-14vh,0) rotate(0deg); } to { transform: translate3d(var(--drift, 18px),126vh,0) rotate(7deg); } }
+        @keyframes auroraDrift { from { transform: translate3d(-1.5%, -1%, 0) scale(1); } to { transform: translate3d(1.5%, 1%, 0) scale(1.04); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cyber-aurora, .token-rain span { animation: none !important; }
+            .token-rain { opacity: 0.18; }
+        }
+
         @media (max-width: 1200px) { .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 900px) {
             .sidebar { display: none; }
@@ -512,6 +696,9 @@
             .mobile-brand .sidebar-brand-icon { width: 34px; height: 34px; font-size: 20px; }
             .mobile-nav-select { min-height: 38px; border: 1px solid var(--border); border-radius: 11px; background: #fff; padding: 0 10px; color: var(--text-primary); }
             .main-content { margin-left: 0; padding: 88px 16px 24px; }
+            .cyber-shell { opacity: 0.32; }
+            .token-rain { opacity: 0.72; }
+            .token-rain span { font-size: 11px; }
         }
         @media (max-width: 640px) {
             .login-card { padding: 34px 24px; border-radius: 24px; }
@@ -519,15 +706,25 @@
             .filter-select { width: 100%; }
             .status-donut-chart { grid-template-columns: 1fr; justify-items: center; height: auto; }
             .product-legend { grid-template-columns: 1fr; }
+            .status-command-grid { grid-template-columns: 1fr; }
+            .insight-number, .status-total-number { font-size: 44px; }
             .modal-overlay { padding: 12px; align-items: flex-end; }
             .modal-content { max-height: calc(100vh - 24px); border-radius: 22px; }
             .toast-container { left: 12px; right: 12px; top: 72px; }
             .toast { width: 100%; max-width: none; min-width: 0; }
+            .token-rain { opacity: 0.5; }
+            .token-rain span:nth-child(n+17) { display: none; }
+            .login-signal { font-size: 10px; letter-spacing: 0.08em; }
         }
     </style>
 </head>
 <body>
     <div id="app">
+        <div class="cyber-shell" aria-hidden="true">
+            <div class="cyber-aurora"></div>
+            <div class="cyber-grid"></div>
+        </div>
+
         <!-- Toast -->
         <div class="toast-container">
             <div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">
@@ -538,11 +735,43 @@
 
         <!-- 登录页 -->
         <div v-if="!isLoggedIn" class="login-page">
+            <div class="token-rain" aria-hidden="true">
+                <span style="--x:4;--d:-1s;--dur:9s;--o:.56;--drift:18px;">TOKEN</span>
+                <span style="--x:9;--d:-5s;--dur:12s;--o:.42;--drift:-14px;">AUTH</span>
+                <span style="--x:13;--d:-2s;--dur:10s;--o:.62;--drift:24px;">VERIFY</span>
+                <span style="--x:18;--d:-7s;--dur:14s;--o:.36;--drift:-20px;">0xCERB</span>
+                <span style="--x:23;--d:-4s;--dur:11s;--o:.52;--drift:12px;">LICENSE</span>
+                <span style="--x:29;--d:-9s;--dur:15s;--o:.34;--drift:-18px;">KEY</span>
+                <span style="--x:34;--d:-3s;--dur:8s;--o:.6;--drift:20px;">ACCESS</span>
+                <span style="--x:39;--d:-6s;--dur:13s;--o:.45;--drift:-12px;">VALID</span>
+                <span style="--x:44;--d:-10s;--dur:16s;--o:.32;--drift:22px;">SIG</span>
+                <span style="--x:49;--d:-2.5s;--dur:9.5s;--o:.58;--drift:-16px;">DEVICE</span>
+                <span style="--x:54;--d:-8s;--dur:14.5s;--o:.4;--drift:18px;">JWT</span>
+                <span style="--x:59;--d:-4.5s;--dur:10.5s;--o:.52;--drift:-22px;">REVOKE</span>
+                <span style="--x:64;--d:-11s;--dur:17s;--o:.3;--drift:14px;">HASH</span>
+                <span style="--x:69;--d:-1.5s;--dur:8.5s;--o:.64;--drift:-18px;">TOKEN</span>
+                <span style="--x:74;--d:-6.5s;--dur:12.5s;--o:.44;--drift:20px;">AUTH</span>
+                <span style="--x:79;--d:-3.5s;--dur:11.5s;--o:.5;--drift:-12px;">CERBERUS</span>
+                <span style="--x:84;--d:-9.5s;--dur:15.5s;--o:.34;--drift:18px;">VERIFY</span>
+                <span style="--x:89;--d:-5.5s;--dur:13.5s;--o:.46;--drift:-20px;">GATE</span>
+                <span style="--x:94;--d:-12s;--dur:18s;--o:.28;--drift:16px;">ACCESS</span>
+                <span style="--x:7;--d:-13s;--dur:18s;--o:.28;--drift:-10px;">令牌</span>
+                <span style="--x:16;--d:-14s;--dur:19s;--o:.26;--drift:18px;">密钥</span>
+                <span style="--x:27;--d:-15s;--dur:20s;--o:.24;--drift:-16px;">授权</span>
+                <span style="--x:37;--d:-16s;--dur:21s;--o:.22;--drift:12px;">01AF</span>
+                <span style="--x:47;--d:-17s;--dur:22s;--o:.2;--drift:-14px;">9C3E</span>
+                <span style="--x:57;--d:-18s;--dur:23s;--o:.22;--drift:16px;">BIND</span>
+                <span style="--x:67;--d:-19s;--dur:24s;--o:.2;--drift:-18px;">AUDIT</span>
+                <span style="--x:77;--d:-20s;--dur:25s;--o:.18;--drift:14px;">TRACE</span>
+                <span style="--x:87;--d:-21s;--dur:26s;--o:.18;--drift:-12px;">ONLINE</span>
+            </div>
+            <div class="glitch-tear" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="login-card">
                 <div class="login-logo">
                     <div class="login-logo-icon">🐕‍🦺</div>
                     <h1>Cerberus</h1>
                     <p>安全许可证管理控制台</p>
+                    <div class="login-signal">TOKEN STREAM ONLINE · CERBERUS GATE</div>
                 </div>
                 <form @submit.prevent="login">
                     <div class="input-group">
@@ -634,39 +863,71 @@
 
                     <!-- 图表 -->
                     <div class="chart-row">
-                        <div class="chart-card">
-                            <div class="chart-title">📊 产品分布</div>
-                            <div class="animated-chart">
-                                <div v-if="productStats.length === 0" style="color:var(--text-muted);font-size:14px;text-align:center;padding:40px;">暂无数据</div>
-                                <div class="product-share" v-else>
-                                    <div class="product-stack">
-                                        <div class="product-segment" v-for="(p, i) in productShareItems" :key="p.name" :title="p.name + '：' + p.count" :style="{ '--color': chartColors[i % chartColors.length], '--w': p.percent, 'animation-delay': (i * 0.05) + 's' }"></div>
+                        <div class="chart-card insight-card">
+                            <div class="chart-title">📦 产品分布</div>
+                            <div class="insight-panel">
+                                <div v-if="productStats.length === 0" class="insight-empty">
+                                    <div class="insight-empty-icon">✦</div>
+                                    <div class="insight-empty-title">等待产品接入</div>
+                                    <p>创建许可证后，这里会生成产品分布看板</p>
+                                </div>
+                                <template v-else>
+                                    <div class="insight-hero">
+                                        <div class="insight-kicker">PRODUCT PORTFOLIO</div>
+                                        <div class="insight-metric">
+                                            <div class="insight-number">{{ products.length }}</div>
+                                            <div class="insight-label">个产品</div>
+                                        </div>
+                                        <div class="insight-subline">{{ stats.total }} 个许可证 · Top 产品占比 {{ productShareItems[0]?.percent.toFixed(1) || '0.0' }}%</div>
                                     </div>
-                                    <div class="product-legend">
-                                        <div class="product-legend-item" v-for="(p, i) in productShareItems" :key="p.name" :style="{ '--color': chartColors[i % chartColors.length] }">
-                                            <span class="product-dot"></span>
-                                            <span class="product-name" :title="p.name">{{ p.name }}</span>
-                                            <span class="product-count">{{ p.count }}</span>
+                                    <div class="insight-list">
+                                        <div class="insight-row" v-for="(p, i) in productShareItems" :key="p.name" :style="{ '--color': chartColors[i % chartColors.length], '--w': p.percent }" @click="filterByProduct(p.name)">
+                                            <div class="insight-rank">{{ i + 1 }}</div>
+                                            <div class="insight-main">
+                                                <span class="insight-name" :title="p.name">{{ p.name }}</span>
+                                                <div class="insight-bar"><span></span></div>
+                                            </div>
+                                            <div class="insight-value">
+                                                <strong>{{ p.count }}</strong>
+                                                <span>{{ p.percent.toFixed(1) }}%</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="product-summary" v-if="productStats.length > 5">其余产品已合并为「其他」</div>
-                                </div>
+                                    <div class="insight-note" v-if="productStats.length > 5">Top 5 产品已展示，其余许可证合并为「其他」</div>
+                                </template>
                             </div>
                         </div>
-                        <div class="chart-card">
-                            <div class="chart-title">📈 状态分布</div>
-                            <div class="status-donut-chart" :style="statusDonutStyle">
-                                <div class="status-donut">
-                                    <div class="status-donut-center">
-                                        <div class="status-total">{{ stats.total }}</div>
-                                        <div class="status-total-label">许可证</div>
+                        <div class="chart-card status-command-card">
+                            <div class="chart-title">🛡️ 状态分布</div>
+                            <div class="status-command">
+                                <div class="status-summary" @click="filterByStatus('')">
+                                    <div class="status-summary-top">
+                                        <span>LICENSE STATUS</span>
+                                        <strong>{{ stats.activeDevices }} 台设备在线</strong>
                                     </div>
+                                    <div class="status-total-line">
+                                        <div class="status-total-number">{{ stats.total }}</div>
+                                        <div class="status-total-text">个许可证</div>
+                                    </div>
+                                    <div class="status-strip" v-if="stats.total">
+                                        <span class="status-strip-seg active" :style="{ width: (stats.active / stats.total * 100) + '%' }"></span>
+                                        <span class="status-strip-seg expiring" :style="{ width: (stats.expiringSoon / stats.total * 100) + '%' }"></span>
+                                        <span class="status-strip-seg expired" :style="{ width: (stats.expired / stats.total * 100) + '%' }"></span>
+                                        <span class="status-strip-seg revoked" :style="{ width: (stats.revoked / stats.total * 100) + '%' }"></span>
+                                    </div>
+                                    <div class="status-strip empty" v-else></div>
                                 </div>
-                                <div class="status-legend">
-                                    <div class="status-legend-item" v-for="(item, key) in statusItems" :key="key" :style="{ '--color': item.color }">
-                                        <span class="status-dot"></span>
-                                        <span>{{ item.icon }} {{ item.label }}</span>
-                                        <span class="status-legend-value">{{ statusCounts[key] }}</span>
+                                <div class="status-command-grid">
+                                    <div class="status-tile" v-for="(item, key) in statusItems" :key="key" :style="{ '--color': item.color, '--w': stats.total ? (statusCounts[key] / stats.total * 100) : 0 }" @click="filterByStatus(key)">
+                                        <div class="status-tile-head">
+                                            <span class="status-tile-icon">{{ item.icon }}</span>
+                                            <span class="status-tile-name">{{ item.label }}</span>
+                                        </div>
+                                        <div class="status-tile-body">
+                                            <div class="status-tile-count">{{ statusCounts[key] }}</div>
+                                            <div class="status-tile-percent">{{ stats.total ? (statusCounts[key] / stats.total * 100).toFixed(1) : '0.0' }}%</div>
+                                        </div>
+                                        <div class="status-tile-bar"><span></span></div>
                                     </div>
                                 </div>
                             </div>
@@ -1540,6 +1801,7 @@
                 });
 
                 const filterByStatus = (status) => { filterStatus.value = status; filterProduct.value = ''; currentPage.value = 'licenses'; };
+                const filterByProduct = (product) => { filterProduct.value = product === '其他' ? '' : product; filterStatus.value = ''; currentPage.value = 'licenses'; };
 
                 const loadLicenses = async (page = 1) => {
                     listLoading.value = true;
@@ -1763,7 +2025,7 @@
                 return {
                     isLoggedIn, loginForm, loginLoading, login, logout, currentPage, toasts, now, nowStr,
                     licenses, listLoading, currentPageNum, totalPages, searchQuery, filterProduct, filterStatus,
-                    stats, products, productStats, productShareItems, statusItems, statusCounts, statusDonutStyle, chartColors, recentLicenses, expiringLicenses, allDevices, filteredLicenses, filterByStatus, loadLicenses, refreshData,
+                    stats, products, productStats, productShareItems, statusItems, statusCounts, statusDonutStyle, chartColors, recentLicenses, expiringLicenses, allDevices, filteredLicenses, filterByStatus, filterByProduct, loadLicenses, refreshData,
                     verifyKeyId, verifyLoading, verifyResult, verifyHistory, verifyKey,
                     showCreateModal, showSuccessModal, createLoading, createForm, createdLicense, openCreateModal, createLicense,
                     showDetailModal, selectedLicense, auditLogs, viewLicense,
