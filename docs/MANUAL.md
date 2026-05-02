@@ -399,9 +399,18 @@ curl -X POST http://localhost:8080/api/v1/licenses/revoke \
   -d '{"id": "550e8400-e29b-41d4-a716-446655440000"}'
 ```
 
-**注意：吊销操作不可逆！**
+### 4.6 重新启用已吊销 License
 
-### 4.6 解封 License
+重新启用会将 License 恢复为 active，并同步恢复该 License 下已吊销的机器，不会重置换绑计数。
+
+```bash
+curl -X POST http://localhost:8080/api/v1/licenses/reactivate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-admin-token" \
+  -d '{"id": "550e8400-e29b-41d4-a716-446655440000"}'
+```
+
+### 4.7 解封 License
 
 当 License 因换绑次数超限被暂停时：
 
@@ -415,7 +424,7 @@ curl -X POST http://localhost:8080/api/v1/licenses/unsuspend \
   }'
 ```
 
-### 4.7 吊销机器
+### 4.8 吊销机器
 
 管理员可以主动吊销单个机器：
 
@@ -429,7 +438,7 @@ curl -X POST http://localhost:8080/api/v1/licenses/machines/revoke \
   }'
 ```
 
-### 4.8 查询审计日志
+### 4.9 查询审计日志
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/licenses/audit \

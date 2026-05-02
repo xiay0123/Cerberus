@@ -232,7 +232,7 @@ type revokeLicenseReq struct {
 
 // Revoke 处理吊销 License 请求。
 //
-// 吊销操作不可逆，License 及其所有机器都将被标记为已吊销。
+// License 及其所有机器都将被标记为已吊销。
 //
 // 请求：
 //
@@ -254,6 +254,38 @@ func (h *AdminHandler) Revoke(c *gin.Context) {
 
 	h.adminEngine.AuditLog(req.ID, "revoke", "license revoked", c.ClientIP())
 	response.OK(c, nil)
+}
+
+// reactivateLicenseReq 重新启用 License 请求结构体。
+type reactivateLicenseReq struct {
+	// ID License ID。
+	ID string `json:"id" binding:"required"`
+}
+
+// Reactivate 处理重新启用已吊销 License 请求。
+//
+// 将 License 恢复为 active，并恢复其关联的已吊销机器。
+//
+// 请求：
+//
+//	POST /api/v1/licenses/reactivate
+//	{
+//	    "id": "xxx-xxx-xxx"
+//	}
+func (h *AdminHandler) Reactivate(c *gin.Context) {
+	var req reactivateLicenseReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, 400, err.Error())
+		return
+	}
+
+	if err := h.adminEngine.Reactivate(req.ID); err != nil {
+		response.Error(c, 400, err.Error())
+		return
+	}
+
+	h.adminEngine.AuditLog(req.ID, "reactivate", "license reactivated", c.ClientIP())
+	response.OK(c, gin.H{"message": "license reactivated successfully"})
 }
 
 // ============================================================

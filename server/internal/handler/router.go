@@ -149,6 +149,7 @@ func SetupRouter(cfg *config.Config, adminEngine *engine.AdminEngine, onlineEngi
 			licenses.POST("/list", adminHandler.List)
 			licenses.POST("/delete", adminHandler.Delete)
 			licenses.POST("/revoke", adminHandler.Revoke)
+			licenses.POST("/reactivate", adminHandler.Reactivate)
 			licenses.POST("/renew", adminHandler.Renew)
 			licenses.POST("/unsuspend", adminHandler.Unsuspend)
 			licenses.POST("/audit", adminHandler.AuditLogs)

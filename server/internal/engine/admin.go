@@ -50,9 +50,9 @@ type AdminEngine struct {
 //	engine := NewAdminEngine(db, 5, 24*time.Hour)
 func NewAdminEngine(db *gorm.DB, maxMachines int, heartbeatTTL time.Duration) *AdminEngine {
 	return &AdminEngine{
-		db:            db,
-		maxMachines:   maxMachines,
-		heartbeatTTL:  heartbeatTTL,
+		db:           db,
+		maxMachines:  maxMachines,
+		heartbeatTTL: heartbeatTTL,
 	}
 }
 
@@ -139,8 +139,6 @@ func (e *AdminEngine) Create(params CreateParams) (*model.License, error) {
 //  1. 将 License 状态设为 revoked
 //  2. 将所有关联的机器状态设为 revoked
 //
-// 注意：吊销操作不可逆。
-//
 // 参数：
 //   - licenseID: License ID
 //
@@ -160,6 +158,28 @@ func (e *AdminEngine) Revoke(licenseID string) error {
 		Update("status", types.MachineRevoked)
 
 	return nil
+}
+
+// Reactivate 重新启用已吊销 License。
+func (e *AdminEngine) Reactivate(licenseID string) error {
+	var l model.License
+	if err := e.db.Where("id = ?", licenseID).First(&l).Error; err != nil {
+		return fmt.Errorf("license not found")
+	}
+
+	if l.Status != types.LicenseRevoked {
+		return fmt.Errorf("license is not revoked")
+	}
+
+	return e.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&l).Update("status", types.LicenseActive).Error; err != nil {
+			return err
+		}
+
+		return tx.Model(&model.Machine{}).
+			Where("license_id = ? AND status = ?", licenseID, types.MachineRevoked).
+			Update("status", types.MachineActive).Error
+	})
 }
 
 // Renew 续期 License。

@@ -896,7 +896,7 @@ paths:
       tags:
         - License
       summary: 吊销 License
-      description: 将 License 及其关联机器标记为 revoked。该操作不可逆。
+      description: 将 License 及其关联机器标记为 revoked。可通过重新启用接口恢复。
       operationId: revokeLicense
       security:
         - BearerAuth: []
@@ -913,6 +913,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/licenses/reactivate:
+    post:
+      tags:
+        - License
+      summary: 重新启用 License
+      description: 将 revoked 状态的 License 恢复为 active，并将其关联的 revoked 机器恢复为 active。不重置换绑计数。
+      operationId: reactivateLicense
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IDRequest'
+      responses:
+        '200':
+          description: 重新启用成功。
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/APIResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MessageData'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
