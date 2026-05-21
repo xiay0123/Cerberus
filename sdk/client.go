@@ -368,7 +368,7 @@ func (c *Client) Heartbeat(ctx context.Context, licenseID string, opts ...Option
 	options := applyOptions(opts...)
 
 	reqBody := map[string]interface{}{
-		"license_id":   licenseID,
+		"license_id":  licenseID,
 		"fingerprint": options.fingerprint,
 	}
 	if options.ip != "" {
@@ -401,7 +401,7 @@ func (c *Client) Heartbeat(ctx context.Context, licenseID string, opts ...Option
 //	fmt.Printf("剩余换绑次数: %d\n", result.Remaining)
 func (c *Client) Unbind(ctx context.Context, licenseID, oldFingerprint string) (*types.UnbindMachineResult, error) {
 	reqBody := map[string]interface{}{
-		"license_id":       licenseID,
+		"license_id":      licenseID,
 		"old_fingerprint": oldFingerprint,
 	}
 

@@ -29,10 +29,10 @@ import (
 //   - 换绑：解绑旧机器以激活新机器
 //   - GeoIP：检测异地登录
 type OnlineEngine struct {
-	db            *gorm.DB           // 数据库连接
-	maxMachines   int                // 默认最大机器数
-	heartbeatTTL  time.Duration      // 心跳超时时间（暂未使用）
-	geoipDetector *geoip.Detector    // 地理位置检测器
+	db            *gorm.DB        // 数据库连接
+	maxMachines   int             // 默认最大机器数
+	heartbeatTTL  time.Duration   // 心跳超时时间（暂未使用）
+	geoipDetector *geoip.Detector // 地理位置检测器
 }
 
 // NewOnlineEngine 创建在线验证引擎实例。

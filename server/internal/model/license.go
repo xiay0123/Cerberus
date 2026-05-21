@@ -24,27 +24,27 @@ import (
 //   - 换绑控制：最大换绑次数、已用换绑次数
 //   - 地理位置：首次激活时记录（Key 级别异地检测）
 type License struct {
-	ID              string             `gorm:"primaryKey;size:36" json:"id"`
-	Name            string             `gorm:"size:255;not null" json:"name"`
-	Product         string             `gorm:"size:255;not null" json:"product"`
-	Issuer          string             `gorm:"size:255" json:"issuer"`
-	MaxMachines     int                `gorm:"not null;default:1" json:"max_machines"`
-	IPBindingEnabled bool              `gorm:"default:false" json:"ip_binding_enabled"`
-	ValidFrom       int64              `gorm:"not null" json:"valid_from"`
-	ValidUntil      int64              `gorm:"not null" json:"valid_until"`
-	DurationSec     int64              `gorm:"not null" json:"duration_sec"`
-	Status          types.LicenseStatus `gorm:"size:32;not null;default:active" json:"status"`
-	Machines        []Machine          `gorm:"foreignKey:LicenseID" json:"machines,omitempty"`
-	MaxUnbindCount  int                `gorm:"not null;default:3" json:"max_unbind_count"`
-	UnbindCount     int                `gorm:"default:0" json:"unbind_count"`
-	GeoCountry      string             `gorm:"size:8" json:"geo_country,omitempty"`
-	GeoRegion       string             `gorm:"size:32" json:"geo_region,omitempty"`
-	GeoCity         string             `gorm:"size:64" json:"geo_city,omitempty"`
-	GeoLatitude     float64            `json:"geo_latitude,omitempty"`
-	GeoLongitude    float64            `json:"geo_longitude,omitempty"`
-	CreatedAt       time.Time          `json:"created_at"`
-	UpdatedAt       time.Time          `json:"updated_at"`
-	DeletedAt       gorm.DeletedAt     `gorm:"index" json:"-"`
+	ID               string              `gorm:"primaryKey;size:36" json:"id"`
+	Name             string              `gorm:"size:255;not null" json:"name"`
+	Product          string              `gorm:"size:255;not null" json:"product"`
+	Issuer           string              `gorm:"size:255" json:"issuer"`
+	MaxMachines      int                 `gorm:"not null;default:1" json:"max_machines"`
+	IPBindingEnabled bool                `gorm:"default:false" json:"ip_binding_enabled"`
+	ValidFrom        int64               `gorm:"not null" json:"valid_from"`
+	ValidUntil       int64               `gorm:"not null" json:"valid_until"`
+	DurationSec      int64               `gorm:"not null" json:"duration_sec"`
+	Status           types.LicenseStatus `gorm:"size:32;not null;default:active" json:"status"`
+	Machines         []Machine           `gorm:"foreignKey:LicenseID" json:"machines,omitempty"`
+	MaxUnbindCount   int                 `gorm:"not null;default:3" json:"max_unbind_count"`
+	UnbindCount      int                 `gorm:"default:0" json:"unbind_count"`
+	GeoCountry       string              `gorm:"size:8" json:"geo_country,omitempty"`
+	GeoRegion        string              `gorm:"size:32" json:"geo_region,omitempty"`
+	GeoCity          string              `gorm:"size:64" json:"geo_city,omitempty"`
+	GeoLatitude      float64             `json:"geo_latitude,omitempty"`
+	GeoLongitude     float64             `json:"geo_longitude,omitempty"`
+	CreatedAt        time.Time           `json:"created_at"`
+	UpdatedAt        time.Time           `json:"updated_at"`
+	DeletedAt        gorm.DeletedAt      `gorm:"index" json:"-"`
 }
 
 // TableName 返回 License 表名。

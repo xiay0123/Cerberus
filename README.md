@@ -190,17 +190,17 @@ cerberus-client verify --license <license-id>
 
 ### 公开接口
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST` | `/api/v1/activate` | 激活设备 |
-| `POST` | `/api/v1/verify` | 验证 License |
-| `POST` | `/api/v1/heartbeat` | 心跳上报 |
-| `POST` | `/api/v1/unbind` | 自助解绑 / 换绑 |
+| 方法     | 路径                  | 说明         |
+|--------|---------------------|------------|
+| `POST` | `/api/v1/activate`  | 激活设备       |
+| `POST` | `/api/v1/verify`    | 验证 License |
+| `POST` | `/api/v1/heartbeat` | 心跳上报       |
+| `POST` | `/api/v1/unbind`    | 自助解绑 / 换绑  |
 
 ### 认证接口
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
+| 方法     | 路径            | 说明           |
+|--------|---------------|--------------|
 | `POST` | `/auth/login` | 管理员登录，返回 JWT |
 
 ### 管理接口
@@ -211,17 +211,17 @@ cerberus-client verify --license <license-id>
 Authorization: Bearer <admin-token-or-jwt>
 ```
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST` | `/api/v1/licenses/create` | 创建 License |
-| `POST` | `/api/v1/licenses/get` | 查询 License 详情 |
-| `POST` | `/api/v1/licenses/list` | 查询 License 列表 |
-| `POST` | `/api/v1/licenses/delete` | 删除 License |
-| `POST` | `/api/v1/licenses/revoke` | 撤销 License |
-| `POST` | `/api/v1/licenses/renew` | 续期 License |
-| `POST` | `/api/v1/licenses/unsuspend` | 解除暂停 |
-| `POST` | `/api/v1/licenses/audit` | 查询审计日志 |
-| `POST` | `/api/v1/licenses/machines/revoke` | 解绑 / 撤销设备 |
+| 方法     | 路径                                 | 说明            |
+|--------|------------------------------------|---------------|
+| `POST` | `/api/v1/licenses/create`          | 创建 License    |
+| `POST` | `/api/v1/licenses/get`             | 查询 License 详情 |
+| `POST` | `/api/v1/licenses/list`            | 查询 License 列表 |
+| `POST` | `/api/v1/licenses/delete`          | 删除 License    |
+| `POST` | `/api/v1/licenses/revoke`          | 撤销 License    |
+| `POST` | `/api/v1/licenses/renew`           | 续期 License    |
+| `POST` | `/api/v1/licenses/unsuspend`       | 解除暂停          |
+| `POST` | `/api/v1/licenses/audit`           | 查询审计日志        |
+| `POST` | `/api/v1/licenses/machines/revoke` | 解绑 / 撤销设备     |
 
 ## API 示例
 
@@ -281,23 +281,23 @@ geoip:
 
 策略说明：
 
-| 策略 | 说明 |
-| --- | --- |
+| 策略      | 说明           |
+|---------|--------------|
 | `allow` | 允许异地登录，仅记录日志 |
 | `alert` | 允许异地登录，并记录告警 |
-| `deny` | 拒绝异地登录 |
+| `deny`  | 拒绝异地登录       |
 
 ## 技术栈
 
-| 模块 | 技术 |
-| --- | --- |
-| 服务端 | Go, Gin |
-| 数据库 | SQLite, GORM |
-| Web 管理后台 | Vue, Axios |
-| CLI | Cobra |
-| 配置 | Viper |
-| 认证 | Admin Token, JWT |
-| 指纹采集 | Windows / Linux / macOS |
+| 模块       | 技术                      |
+|----------|-------------------------|
+| 服务端      | Go, Gin                 |
+| 数据库      | SQLite, GORM            |
+| Web 管理后台 | Vue, Axios              |
+| CLI      | Cobra                   |
+| 配置       | Viper                   |
+| 认证       | Admin Token, JWT        |
+| 指纹采集     | Windows / Linux / macOS |
 
 ## 开发检查
 

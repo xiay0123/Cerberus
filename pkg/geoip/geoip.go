@@ -233,9 +233,9 @@ func (d *Detector) Check(ctx context.Context, ipStr string, recordedRegion *Regi
 	// 未启用检测，直接允许
 	if !d.config.Enabled {
 		return &CheckResult{
-			Allowed:     true,
-			Alert:       false,
-			Reason:      "geoip detection disabled",
+			Allowed:       true,
+			Alert:         false,
+			Reason:        "geoip detection disabled",
 			IsNewLocation: recordedRegion == nil,
 		}, nil
 	}
@@ -254,11 +254,11 @@ func (d *Detector) Check(ctx context.Context, ipStr string, recordedRegion *Regi
 	// 首次激活，记录位置
 	if recordedRegion == nil {
 		return &CheckResult{
-			Allowed:       true,
-			Alert:         false,
+			Allowed:         true,
+			Alert:           false,
 			CurrentLocation: currentLoc,
-			IsNewLocation: true,
-			Reason:        "first activation, location recorded",
+			IsNewLocation:   true,
+			Reason:          "first activation, location recorded",
 		}, nil
 	}
 
